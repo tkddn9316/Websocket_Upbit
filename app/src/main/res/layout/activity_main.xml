@@ -28,7 +28,59 @@
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="야" />
+                android:text="@{@string/temp_type(viewModel.tempText.type)}"
+                android:textColor="@color/black_700"
+                android:textSize="16dp" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{@string/temp_code(viewModel.tempText.code)}"
+                android:textColor="@color/black_700"
+                android:textSize="16dp" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{@string/temp_opening_price(viewModel.tempText.opening_price)}"
+                android:textColor="@color/black_700"
+                android:textSize="16dp" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{@string/temp_high_price(viewModel.tempText.high_price)}"
+                android:textColor="@color/black_700"
+                android:textSize="16dp" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{@string/temp_low_price(viewModel.tempText.low_price)}"
+                android:textColor="@color/black_700"
+                android:textSize="16dp" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{@string/temp_trade_price(viewModel.tempText.trade_price)}"
+                android:textColor="@color/black_700"
+                android:textSize="16dp"
+                android:textStyle="bold" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{@string/temp_prev_closing_price(viewModel.tempText.prev_closing_price)}"
+                android:textColor="@color/black_700"
+                android:textSize="16dp" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{@string/temp_change(viewModel.tempText.change)}"
+                android:textColor="@color/black_700"
+                android:textSize="16dp" />
         </LinearLayout>
 
         <com.example.websocket_upbit.view.base.LoadingBar

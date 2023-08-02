@@ -19,4 +19,14 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
         viewModel.getData()
         viewModel.getTicker()
     }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.onBind()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        viewModel.onClosed()
+    }
 }

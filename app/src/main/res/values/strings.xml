@@ -3,4 +3,14 @@
     <string name="no">아니오</string>
     <string name="close">닫기</string>
     <string name="krw">KRW</string>
+
+    <string name="temp_type">타입: %1$s</string>
+    <string name="temp_code">마켓 코드: %1$s</string>
+    <string name="temp_opening_price">시가: %1$f</string>
+    <string name="temp_high_price">고가: %1$f</string>
+    <string name="temp_low_price">저가: %1$f</string>
+    <string name="temp_trade_price">현재가: %1$f</string>
+    <string name="temp_prev_closing_price">전일 종가: %1$f</string>
+    <string name="temp_change">전일 대비: %1$s</string>
+    <string name="temp_timestamp">시간: %1$f</string>
 </resources>
