@@ -1,5 +1,6 @@
 package com.example.websocket_upbit.websocket
 
+import com.example.websocket_upbit.data.model.Market
 import com.example.websocket_upbit.data.model.Ticker
 import com.example.websocket_upbit.data.retrofit.networkThread
 import com.example.websocket_upbit.util.FConstrant
@@ -151,7 +152,7 @@ object WebSocketManager {
             }
         } else {
             onClose()
-            FLog.e("reconnect over $MAX_NUM,please check url or network")
+            FLog.e("reconnect over $MAX_NUM, please check url or network")
         }
     }
 
@@ -161,10 +162,10 @@ object WebSocketManager {
         socket!!.send(EVENT_PING)
     }
 
-    fun onMain() {
+    fun onMain(list: List<Market>) {
         FLog.e("onMain")
-        // TODO: 일단 BTC만
-        send(SocketEvent(EVENT_TICKER, mutableListOf("KRW-BTC")))
+        val data = list.map { it.market }
+        send(SocketEvent(EVENT_TICKER, data))
     }
 
     private fun send(event: SocketEvent): Boolean {

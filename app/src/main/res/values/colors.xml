@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="transparent">@android:color/transparent</color>
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>
@@ -12,6 +13,8 @@
     <color name="color_32e0c4">#32e0c4</color>
     <color name="color_222831">#222831</color>
     <color name="red_500">#eb3246</color>
+    <color name="blue_500">#1655a7</color>
     <color name="gray_500">#dcdfe3</color>
+    <color name="black_500">#999999</color>
     <color name="black_700">#333333</color>
 </resources>

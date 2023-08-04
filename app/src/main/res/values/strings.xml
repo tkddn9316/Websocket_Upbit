@@ -13,4 +13,9 @@
     <string name="temp_prev_closing_price">전일 종가: %1$f</string>
     <string name="temp_change">전일 대비: %1$s</string>
     <string name="temp_timestamp">시간: %1$f</string>
+    <string name="signed_change_rate">%1$f%</string>
+    
+    <string name="korean_name">한글명</string>
+    <string name="trade_price">현재가</string>
+    <string name="prev_percent">전일대비</string>
 </resources>

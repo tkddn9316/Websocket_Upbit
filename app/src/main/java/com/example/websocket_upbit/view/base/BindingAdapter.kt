@@ -12,6 +12,10 @@ import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.websocket_upbit.R
+import com.example.websocket_upbit.data.model.Ticker
+import com.example.websocket_upbit.util.FConstrant
+import com.example.websocket_upbit.view.PageRecyclerView
 
 object BindingAdapter {
     private fun Boolean?.gone(): Int {
@@ -66,13 +70,13 @@ object BindingAdapter {
         recyclerView.adapter = adapter
     }
 
-//    @JvmStatic
-//    @BindingAdapter("items")
-//    fun bindItems(recyclerView: RecyclerView, data: List<*>) {
-//        recyclerView.adapter?.let {
-//            (it as BaseListAdapter<*, *>).setData(data as List<Nothing>)
-//        }
-//    }
+    @JvmStatic
+    @BindingAdapter("items")
+    fun bindItems(recyclerView: RecyclerView, data: List<*>) {
+        recyclerView.adapter?.let {
+            (it as BaseListAdapter<*, *>).setData(data as List<Nothing>)
+        }
+    }
 
 //    @JvmStatic
 //    @BindingAdapter("resource")
@@ -134,6 +138,35 @@ object BindingAdapter {
             Html.fromHtml(value, Html.FROM_HTML_MODE_LEGACY)
         } else {
             Html.fromHtml(value)
+        }
+    }
+
+    @JvmStatic
+    @BindingAdapter("observe")
+    fun bindObserve(recyclerView: PageRecyclerView, observable: FObservable<*>) {
+        recyclerView.setObservable(observable)
+    }
+
+    @JvmStatic
+    @BindingAdapter("updown")
+    fun bindUpDown(v: View, value: Ticker?) {
+        value?.let {
+            if (it.lazy) {
+                if (FConstrant.SellColor.SELL.value == it.ask_bid) {
+                    v.setBackgroundResource(R.drawable.bg_blue_down)
+                } else if (FConstrant.SellColor.BUY.value == it.ask_bid) {
+                    v.setBackgroundResource(R.drawable.bg_red_up)
+                }
+//                when (it.isPlus) {
+//                    1 -> v.setBackgroundResource(R.drawable.bg_red_up)
+//                    -1 -> v.setBackgroundResource(R.drawable.bg_blue_down)
+//                    else -> v.setBackgroundResource(R.drawable.bg_black_zero)
+//                }
+                v.postDelayed({
+                    it.lazy = false
+                    v.setBackgroundResource(R.color.transparent)
+                }, 300)
+            }
         }
     }
 

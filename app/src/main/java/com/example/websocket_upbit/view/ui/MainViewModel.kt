@@ -1,14 +1,18 @@
 package com.example.websocket_upbit.view.ui
 
 import android.app.Application
-import androidx.databinding.ObservableField
+import androidx.databinding.ObservableArrayList
 import androidx.lifecycle.MutableLiveData
 import com.example.websocket_upbit.R
+import com.example.websocket_upbit.data.model.Market
 import com.example.websocket_upbit.data.model.Ticker
 import com.example.websocket_upbit.data.retrofit.ApiModule
+import com.example.websocket_upbit.data.retrofit.networkThread
 import com.example.websocket_upbit.domain.repository.MarketRepository
 import com.example.websocket_upbit.util.FLog
 import com.example.websocket_upbit.view.base.BaseViewModel
+import com.example.websocket_upbit.view.base.FObservable
+import com.example.websocket_upbit.view.base.FObservableArrayList
 import com.example.websocket_upbit.websocket.WebSocketDataListener
 import com.example.websocket_upbit.websocket.WebSocketManager
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,48 +24,113 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val marketRepository: MarketRepository,
     application: Application
-) : BaseViewModel(application) {
-    val tempText = MutableLiveData<Ticker>()
+) : BaseViewModel(application), FObservable<List<Ticker>> {
+    private val marketNameList = mutableListOf<Market>()
+    val items: ObservableArrayList<Ticker> = FObservableArrayList()
 
     init {
         title.set(getContext().getString(R.string.app_name))
         back.set(true)
+
+        getTicker()
     }
 
-    fun getData() {
-        loading.set(true)
-        addDisposable(
-            marketRepository.deleteAll().networkThread().andThen(
-                ApiModule.startRetrofit().getMarket().networkThread(loading::set).toFlowable()
-            )
-                .filter { it.isNotEmpty() }
-                .map { list ->
-                    // KRW만
-                    list.filter { market -> market.market.contains(getContext().getString(R.string.krw)) }
-                }
-                .flatMapCompletable {
-                    FLog.e(it)
-                    marketRepository.insert(it).networkThread()
-                }
-                .doFinally { loading.set(false) }
-                .subscribe({ }, error::setValue)
-        )
+    override fun getObservableArrayList(): ObservableArrayList<*> {
+        return items
+    }
+
+    override fun getData(any: Any?) {
+        any?.let { page ->
+            if (page is Int) {
+                loading.set(true)
+                addDisposable(
+                    marketRepository.deleteAll().networkThread().andThen(
+                        // 마켓 코드가 먼저 필요하므로 getMarket
+                        ApiModule.startRetrofit().getMarket().networkThread(loading::set)
+                            .toFlowable()
+                    )
+                        .filter { it.isNotEmpty() }
+                        .map { list ->
+                            // KRW만
+                            list.filter { market -> market.market.contains(getContext().getString(R.string.krw)) }
+                        }
+                        .map { list ->
+                            // 30개만
+                            if (list.size >= 30) list.subList(0, 29) else list
+                        }
+                        .flatMap {
+                            FLog.e(it)
+                            marketNameList.addAll(it)
+                            val marketCodeList = it.map { market -> market.market }
+                            // DB 저장
+                            marketRepository.insert(it).networkThread().andThen(
+                                // 최초 TICKER 생성
+                                ApiModule.startRetrofit().getTickers(marketCodeList)
+                                    .networkThread(loading::set)
+                                    .toFlowable()
+                            )
+                        }
+                        .doFinally { loading.set(false) }
+                        .subscribe(this::onData, error::setValue)
+                )
+            }
+        }
+    }
+
+    override fun onData(data: List<Ticker>) {
+        val list = data.onEach { ticker ->
+            marketNameList.find { market -> market.market == ticker.market }?.let { market ->
+                // TICKER에 한글 이름이 없어서 넣어야함
+                ticker.korean_name = market.korean_name
+            }
+        }
+        FLog.e(list)
+        items.addAll(list.sortedByDescending { ticker -> ticker.trade_price })
+        onOpen()
+    }
+
+    override fun submit(any: Any?) {
+
+    }
+
+    override fun onComplete() {
+
+    }
+
+    override fun onClear() {
+        items.clear()
+        getData(1)
     }
 
     fun getTicker() {
         addDisposable(
-            ApiModule.startRetrofit().getTicker("KRW-BTC")
-                .networkThread(loading::set)
-                .subscribe({
-                    FLog.e(it)
-                    onOpen()
-                }, {
-                    it.printStackTrace()
-                })
+            marketRepository.getTickEventPublisher()
+                .subscribe({ item ->
+//                    val list = item.onEach { ticker ->
+//                        marketNameList.find { market -> market.market == ticker.code }
+//                            ?.let { market ->
+//                                // TICKER에 한글 이름이 없어서 넣어야함
+//                                ticker.korean_name = market.korean_name
+//                                ticker.market = market.market
+//                            }
+//                    }
+
+                    items.clear()
+                    items.addAll(item.sortedByDescending { ticker -> ticker.trade_price })
+
+//                    items.mapIndexed { index, ticker ->
+//                        FLog.e(ticker.code)
+//                        FLog.e(ticker.market)
+//                        item.find { market ->
+//                            market.code == ticker.market } ?.let {
+//                            items[index].trade_price = it.trade_price
+//                        }
+//                    }
+                }, { })
         )
     }
 
-    fun onOpen() {
+    private fun onOpen() {
         onClosed()
         WebSocketManager.onOpen()
     }
@@ -74,17 +143,20 @@ class MainViewModel @Inject constructor(
     fun onBind() {
         val listener = object : WebSocketDataListener {
             override fun onConnect() {
-                FLog.d("onConnect")
-                WebSocketManager.onMain()
+                FLog.e("onConnect")
+                addDisposable(
+                    marketRepository.getAll().networkThread()
+                        .subscribe({ WebSocketManager.onMain(it) }, { })
+                )
             }
 
             override fun onClosed() {
-                FLog.d("onClosed")
+                FLog.e("onClosed")
             }
 
             override fun onFailure() {
                 // 연결 끊어진 경우 5초뒤 재 접속
-                FLog.d("onFailure")
+                FLog.e("onFailure")
                 addDisposable(
                     Observable.just(WebSocketManager).delay(5, TimeUnit.SECONDS)
                         .subscribe({ it.reconnect() }, error::setValue)
@@ -93,8 +165,11 @@ class MainViewModel @Inject constructor(
 
             override fun onData(data: Ticker) {
                 // TICK 받음
-                FLog.e(data)
-                tempText.postValue(data)
+//                FLog.e(data)
+                marketNameList.find { market -> market.market == data.code }?.let { market ->
+                    data.korean_name = market.korean_name
+                }
+                marketRepository.updateTick(data)
             }
         }
         WebSocketManager.setListener(listener)

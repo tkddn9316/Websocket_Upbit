@@ -25,62 +25,61 @@
 
             <include layout="@layout/base_title" />
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@{@string/temp_type(viewModel.tempText.type)}"
-                android:textColor="@color/black_700"
-                android:textSize="16dp" />
+                android:orientation="vertical">
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@{@string/temp_code(viewModel.tempText.code)}"
-                android:textColor="@color/black_700"
-                android:textSize="16dp" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal"
+                    android:padding="6dp">
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@{@string/temp_opening_price(viewModel.tempText.opening_price)}"
-                android:textColor="@color/black_700"
-                android:textSize="16dp" />
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:gravity="center"
+                        android:text="@string/korean_name"
+                        android:textColor="@color/black_700"
+                        android:textSize="14dp" />
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@{@string/temp_high_price(viewModel.tempText.high_price)}"
-                android:textColor="@color/black_700"
-                android:textSize="16dp" />
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="3dp"
+                        android:layout_weight="1"
+                        android:gravity="end"
+                        android:text="@string/trade_price"
+                        android:textColor="@color/black_700"
+                        android:textSize="14dp" />
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@{@string/temp_low_price(viewModel.tempText.low_price)}"
-                android:textColor="@color/black_700"
-                android:textSize="16dp" />
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="end"
+                        android:text="@string/prev_percent"
+                        android:textColor="@color/black_700"
+                        android:textSize="14dp" />
+                </LinearLayout>
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@{@string/temp_trade_price(viewModel.tempText.trade_price)}"
-                android:textColor="@color/black_700"
-                android:textSize="16dp"
-                android:textStyle="bold" />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:background="@color/black_500" />
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@{@string/temp_prev_closing_price(viewModel.tempText.prev_closing_price)}"
-                android:textColor="@color/black_700"
-                android:textSize="16dp" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@{@string/temp_change(viewModel.tempText.change)}"
-                android:textColor="@color/black_700"
-                android:textSize="16dp" />
+                <com.example.websocket_upbit.view.PageRecyclerView
+                    android:id="@+id/recycler_view_"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:adapter="@{view.adapter}"
+                    app:items="@{viewModel.items}"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+            </LinearLayout>
         </LinearLayout>
 
         <com.example.websocket_upbit.view.base.LoadingBar

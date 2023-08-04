@@ -2,7 +2,7 @@ package com.example.websocket_upbit.websocket
 
 data class SocketEvent(
     var type: String,
-    var codes: MutableList<String>,
+    var codes: List<String>,
 ) {
     data class Ticket(
         var ticket: String

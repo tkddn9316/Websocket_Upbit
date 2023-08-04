@@ -11,6 +11,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewModelStoreOwner
+import androidx.recyclerview.widget.RecyclerView
 import com.example.websocket_upbit.R
 import com.example.websocket_upbit.util.FLog
 import com.example.websocket_upbit.util.OnSingleClickListener
@@ -83,6 +84,10 @@ abstract class BaseActivity<VDB : ViewDataBinding, VM : BaseViewModel> :
         } else {
             onRefresh()
         }
+    }
+
+    open fun getAdapter(): RecyclerView.Adapter<*>? {
+        return null
     }
 
     override fun onItemClick(v: View) {
