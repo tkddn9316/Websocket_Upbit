@@ -11,3 +11,11 @@
 업비트에서 ticker(실시간 채결 내역)을 30개 불러와 앱에 세팅합니다.
 
 초기 세팅 이후 곧바로 웹소켓이 작동하여 리스트를 갱신하게 됩니다.
+* 사용 기술
+1. Hilt
+2. Kotlin
+3. Retrofit
+4. Room DB
+5. MVVM
+6. RxJava
+7. WebSocket
