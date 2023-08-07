@@ -18,7 +18,7 @@ import javax.inject.Inject
 class MarketRepositoryImpl @Inject constructor(private val data: MarketDataSource) : MarketRepository {
 
     private val coinList = ConcurrentHashMap<String, Ticker>()
-    private val tickEventPublisher = PublishSubject.create<List<Ticker>>().toSerialized()
+    private val tickEventPublisher = PublishSubject.create<Ticker>().toSerialized()
 
     override fun getAll(): Single<List<Market>> {
         return data.getAll()
@@ -43,7 +43,7 @@ class MarketRepositoryImpl @Inject constructor(private val data: MarketDataSourc
 //        }
 //    }
 
-    override fun getTickEventPublisher(): Flowable<List<Ticker>> {
+    override fun getTickEventPublisher(): Flowable<Ticker> {
 //        FLog.d("getTickEventPublisher : " + data.code)
         return tickEventPublisher.toFlowable(BackpressureStrategy.BUFFER)
             .subscribeOn(Schedulers.computation())
@@ -68,7 +68,8 @@ class MarketRepositoryImpl @Inject constructor(private val data: MarketDataSourc
             it.lazy = true
 
 //            coinList[data.code] = data
+            tickEventPublisher.onNext(it)
         }
-        tickEventPublisher.onNext(coinList.values.toList())
+//        tickEventPublisher.onNext(coinList.values.toList())
     }
 }

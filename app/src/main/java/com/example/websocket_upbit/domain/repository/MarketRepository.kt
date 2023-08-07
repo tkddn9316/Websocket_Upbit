@@ -11,6 +11,6 @@ interface MarketRepository {
     fun insert(data: List<Market>): Completable
     fun deleteAll(): Completable
 //    fun getItems(): Single<List<Ticker>>
-    fun getTickEventPublisher(): Flowable<List<Ticker>>
+    fun getTickEventPublisher(): Flowable<Ticker>
     fun updateTick(data: Ticker)
 }

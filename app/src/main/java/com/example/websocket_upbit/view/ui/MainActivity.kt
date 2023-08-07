@@ -21,7 +21,6 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
     }
 
     override fun onCreateView(savedInstanceState: Bundle?) {
-//        binding.recyclerView.onClear()
         viewModel.getData(0)
     }
 

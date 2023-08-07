@@ -32,7 +32,13 @@ class MainViewModel @Inject constructor(
         title.set(getContext().getString(R.string.app_name))
         back.set(true)
 
-        getTicker()
+        addDisposable(
+            marketRepository.getTickEventPublisher()
+                .subscribe({ item ->
+                    val index = items.indexOf(items.find { it.market == item.code })
+                    items[index] = item
+                }, { })
+        )
     }
 
     override fun getObservableArrayList(): ObservableArrayList<*> {
@@ -102,34 +108,6 @@ class MainViewModel @Inject constructor(
         getData(1)
     }
 
-    fun getTicker() {
-        addDisposable(
-            marketRepository.getTickEventPublisher()
-                .subscribe({ item ->
-//                    val list = item.onEach { ticker ->
-//                        marketNameList.find { market -> market.market == ticker.code }
-//                            ?.let { market ->
-//                                // TICKER에 한글 이름이 없어서 넣어야함
-//                                ticker.korean_name = market.korean_name
-//                                ticker.market = market.market
-//                            }
-//                    }
-
-                    items.clear()
-                    items.addAll(item.sortedByDescending { ticker -> ticker.trade_price })
-
-//                    items.mapIndexed { index, ticker ->
-//                        FLog.e(ticker.code)
-//                        FLog.e(ticker.market)
-//                        item.find { market ->
-//                            market.code == ticker.market } ?.let {
-//                            items[index].trade_price = it.trade_price
-//                        }
-//                    }
-                }, { })
-        )
-    }
-
     private fun onOpen() {
         onClosed()
         WebSocketManager.onOpen()
@@ -155,7 +133,7 @@ class MainViewModel @Inject constructor(
             }
 
             override fun onFailure() {
-                // 연결 끊어진 경우 5초뒤 재 접속
+                // 연결 끊어진 경우 5초 뒤 재접속
                 FLog.e("onFailure")
                 addDisposable(
                     Observable.just(WebSocketManager).delay(5, TimeUnit.SECONDS)
